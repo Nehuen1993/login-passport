@@ -20,13 +20,25 @@ router.get("/producto", async (req, res) => {
     if (!req.session.user ) {
         return res.redirect("login")
     }
-
     const { first_name, last_name, email, age, isAdmin} = req.session.user
-    const products = await productos.find()
 
-    console.log ("los producutosrender son:", products)
-
-    res.render("producto", { first_name, last_name, age, email, isAdmin, products })
+    try {
+       
+        const products= await productos.find();
+        const productsWithOwnProperties = products.map(producto => {
+            return {
+                nombre: producto.nombre,
+                precio: producto.precio
+            };
+        });
+        
+        res.render("producto", { first_name, last_name, age, email, isAdmin, products: productsWithOwnProperties });
+        
+    } catch (error) {
+        console.error("Error al obtener productos:", error);
+        
+    }
+    
 })
 
 router.get("/admin", async (req, res) => {
@@ -35,11 +47,24 @@ router.get("/admin", async (req, res) => {
     }
 
     const { first_name, last_name, email, age, isAdmin} = req.session.user
-    const products = await productos.find()
 
-    console.log ("los producutosrender son:", products)
-
-    res.render("admin", { first_name, last_name, age, email, isAdmin, products })
+    try {
+       
+        const products= await productos.find();
+        const productsWithOwnProperties = products.map(producto => {
+            return {
+                nombre: producto.nombre,
+                precio: producto.precio,
+                stock: producto.stock
+            };
+        });
+        
+        res.render("admin", { first_name, last_name, age, email, isAdmin, products: productsWithOwnProperties });
+        
+    } catch (error) {
+        console.error("Error al obtener productos:", error);
+        
+    }
     
 })
 

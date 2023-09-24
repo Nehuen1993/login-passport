@@ -1,13 +1,13 @@
 <h1>Bienvenido {{first_name}} </h1>
 <p> Mail: {{email}}</p>
 <p> Edad: {{age}}</p>
-<p> Administrador: {{isAdmin}}</p>
+<p> Administrador: SI</p>
 
 <p>Producotos disponibles</p>
 
 <ul>
         {{#each products}}
-            <li>{{ this.nombre }} - Precio: {{ this.price }} - Stock: {{ this.stock }} 
+            <li>{{ this.nombre }} - Precio: {{ this.precio }} - Stock: {{ this.stock }} 
             </li>
         {{/each}}
     </ul>
