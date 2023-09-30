@@ -5,6 +5,7 @@ const {isValidatePassword } = require('../../utils');
 const productos = require('../models/Product');
 const passport = require("passport")
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 router.get("/login", async (req, res) => {
@@ -74,7 +75,7 @@ router.get("/logout", async (req, res) => {
 })
 
 
-router.post('/register', passport.authenticate("register", { failureRedirect: "/failregister" }), async (req, res) => {
+router.post('/register', passport.authenticate("register", { failureRedirect: "/api/sessions/failregister" }), async (req, res) => {
     const { first_name, last_name, email, age, password } = req.body;
 
 
@@ -104,6 +105,24 @@ router.get("/faillogin", async (req, res) => {
     res.send({ error: "Falla" })
 })
 
+router.post("/login", (req, res) => {
+    const { email, password } = req.body
+    if (email == "coder@coder.com" && password == "coderpass") {
+        let token = jwt.sign({ email, password }, "coderSecret", { expiresIn: "24h" })
+        res.cookie("coderCookieToken", token, {
+            maxAge: 60 * 60 * 1000,
+            httpOnly: true
+        }).send({ message: "Logueado existosamente" })
+    }
+})
+
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => { })
+
+router.get("/githubcallback", passport.authenticate("github", { failureRedirect: "/api/session/login" }), async (req, res) => {
+    req.session.user = req.user
+    res.redirect("/api/sessions/producto")
+
+})
 
 router.post("/login", passport.authenticate("login", { failureRedirect: "/faillogin" }), async (req, res) => {
 
